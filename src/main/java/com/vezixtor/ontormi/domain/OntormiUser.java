@@ -1,12 +1,9 @@
 package com.vezixtor.ontormi.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
-public class User {
+public class OntormiUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -15,9 +12,9 @@ public class User {
 
     private String firstname;
 
-    public User() {}
+    public OntormiUser() {}
 
-    public User(String name, String firstname) {
+    public OntormiUser(String name, String firstname) {
         this.name = name;
         this.firstname = firstname;
     }
