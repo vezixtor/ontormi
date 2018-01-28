@@ -7,9 +7,10 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-public class Reopen {
+public class TimeSpent {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private LocalDateTime reopen;
+    private LocalDateTime start;
+    private LocalDateTime end;
 }
