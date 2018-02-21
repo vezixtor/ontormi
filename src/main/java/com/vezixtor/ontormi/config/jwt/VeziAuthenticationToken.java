@@ -5,10 +5,21 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class VeziAuthenticationToken extends AbstractAuthenticationToken {
     private final User user;
+    private String jsonWebToken;
 
-    VeziAuthenticationToken(User user) {
+    public VeziAuthenticationToken(User user) {
         super(user.getAuthorities());
         this.user = user;
+    }
+
+    public VeziAuthenticationToken withToken(String jsonWebToken) {
+        this.jsonWebToken = jsonWebToken;
+        return this;
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return true;
     }
 
     @Override

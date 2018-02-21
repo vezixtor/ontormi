@@ -1,11 +1,12 @@
 package com.vezixtor.ontormi.config;
 
-import com.vezixtor.ontormi.config.jwt.JWTAuthenticationFilter;
+import com.vezixtor.ontormi.config.jwt.AuthorizationFilter;
 import com.vezixtor.ontormi.config.jwt.LoginFilter;
 import com.vezixtor.ontormi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -33,15 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
-                .antMatcher("/**")
+                .antMatcher("/api/**")
                 .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "**/users").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(
-                        new LoginFilter("/api/login", authenticationManager(), userRepository, getBCryptPasswordEncoder()),
-                        UsernamePasswordAuthenticationFilter.class
-                )
-		        .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new LoginFilter("/api/login", authenticationManager(), userRepository,
+                                getBCryptPasswordEncoder()), UsernamePasswordAuthenticationFilter.class)
+		        .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-
 }
