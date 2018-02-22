@@ -12,10 +12,15 @@ public abstract class GenericEntity {
     protected LocalDateTime updatedAt;
 
     @PrePersist
-    private void onCreateLocalDateTime() {
+    private void onCreateEntity() {
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;
+    }
+
+    @PreUpdate
+    private void onUpdateEntity() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
