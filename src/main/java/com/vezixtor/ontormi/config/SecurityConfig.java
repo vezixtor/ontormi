@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,13 +18,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private String[] antPatternsPost = {"/api/users", "/api/auth/sign", "/api/auth/recover"};
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public SecurityConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -36,11 +36,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .antMatcher("/api/**")
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "**/users").permitAll()
+                .antMatchers(HttpMethod.POST, antPatternsPost).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new LoginFilter("/api/login", authenticationManager(), userRepository,
+                .addFilterBefore(new LoginFilter("/api/auth", authenticationManager(), userRepository,
                                 getBCryptPasswordEncoder()), UsernamePasswordAuthenticationFilter.class)
 		        .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    public void configure(WebSecurity webSecurity) {
+        webSecurity.ignoring()
+                .antMatchers(HttpMethod.POST, antPatternsPost);
     }
 }

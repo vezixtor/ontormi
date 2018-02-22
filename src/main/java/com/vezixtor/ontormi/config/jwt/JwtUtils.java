@@ -1,44 +1,47 @@
 package com.vezixtor.ontormi.config.jwt;
 
 import com.vezixtor.ontormi.utils.TimeAgoUtils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.vezixtor.ontormi.utils.TimeUnits;
+import io.jsonwebtoken.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Base64;
 import java.util.Date;
 
-public abstract class JwtUtils {
-	private static final String SECRET = "PalmeirasNaoTemMundial00";
-    private static final String TOKEN_PREFIX = "Bearer";
+public abstract class JwtUtils implements TimeUnits {
+	private static final String SECRET = "RXxspMx4NkmJhfFFNh6zdsG3RXcdrHtv";
+    private static final String TOKEN_PREFIX = "Bearer ";
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_ACCESS_TOKEN = "Access-Token";
     private static final String HEADER_REFRESH_TOKEN = "Refresh-Token";
 
 	public static void addTokensOnHeader(HttpServletResponse response, String subject) {
-		response.addHeader(HEADER_ACCESS_TOKEN, TOKEN_PREFIX + " " + buildAccessToken(subject));
-		response.addHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + " " + buildRefreshToken(subject));
+		Date date = new Date(System.currentTimeMillis());
+		response.addHeader(HEADER_ACCESS_TOKEN, TOKEN_PREFIX + buildAccessToken(subject, date).compact());
+		response.addHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + buildRefreshToken(subject, date).compact());
 	}
 
-	private static String buildAccessToken(String subject) {
+	private static JwtBuilder buildAccessToken(String subject, Date date) {
 		return Jwts.builder()
 				.setSubject(subject)
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + TimeAgoUtils.DAY))
-				.signWith(SignatureAlgorithm.HS512, SECRET)
-				.compact();
+				.setIssuedAt(date)
+				.setExpiration(plusDay(date, 7))
+				.signWith(SignatureAlgorithm.HS512, getKeyDecoded());
 	}
 
-	private static String buildRefreshToken(String subject) {
+	private static JwtBuilder buildRefreshToken(String subject, Date date) {
 		return Jwts.builder()
 				.setSubject(subject)
 				.claim("refresh", true)
-				.setExpiration(new Date(System.currentTimeMillis() + (TimeAgoUtils.DAY * 2)))
-				.signWith(SignatureAlgorithm.HS512, SECRET)
-				.compact();
+				.setIssuedAt(date)
+				.setExpiration(plusDay(date, 14))
+				.signWith(SignatureAlgorithm.HS512, getKeyDecoded());
+	}
+
+	private static Date plusDay(Date date, int days) {
+		return new Date(date.getTime() + (DAY * days));
 	}
 
 	public static Claims parser(String token) {
@@ -63,4 +66,8 @@ public abstract class JwtUtils {
     public static String getAuthorization(ServletRequest request) {
         return getAuthorization((HttpServletRequest) request);
     }
+
+	private static byte[] getKeyDecoded() {
+		return Base64.getDecoder().decode(SECRET);
+	}
 }

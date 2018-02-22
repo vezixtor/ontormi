@@ -7,36 +7,35 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class TimeAgoUtils {
-	public static long SECOND = 1000;
-	public static long MINUTE = SECOND * 60;
-	public static long HOUR = MINUTE * 60;
-	public static long DAY = HOUR * 24;
-	public static long WEEK = DAY * 7;
-	public static long MONTH = DAY * 30;
-	public static long YEAR = DAY * 365;
+public abstract class TimeAgoUtils implements TimeUnits {
 	
 	public static Map<String, String> getTimeAgo(long timeAgoMilliseconds) {
 		Map<String, String> response = new HashMap<>();
 		if (timeAgoMilliseconds <= MINUTE) {
 			response.put("type", "SECOND");
 			response.put("value", String.valueOf(timeAgoMilliseconds/SECOND));
-		}else if (timeAgoMilliseconds <= HOUR) {
+		}
+		else if (timeAgoMilliseconds <= HOUR) {
 			response.put("type", "MINUTE");
 			response.put("value", String.valueOf(timeAgoMilliseconds/MINUTE));
-		}else if (timeAgoMilliseconds <= DAY) {
+		}
+		else if (timeAgoMilliseconds <= DAY) {
 			response.put("type", "HOUR");
 			response.put("value", String.valueOf(timeAgoMilliseconds/HOUR));
-		}else if (timeAgoMilliseconds <= WEEK) {
+		}
+		else if (timeAgoMilliseconds <= WEEK) {
 			response.put("type", "DAY");
 			response.put("value", String.valueOf(timeAgoMilliseconds/DAY));
-		}else if (timeAgoMilliseconds <= MONTH) {
+		}
+		else if (timeAgoMilliseconds <= MONTH) {
 			response.put("type", "WEEK");
 			response.put("value", String.valueOf(timeAgoMilliseconds/WEEK));
-		}else if (timeAgoMilliseconds <= YEAR) {
+		}
+		else if (timeAgoMilliseconds <= YEAR) {
 			response.put("type", "MONTH");
 			response.put("value", String.valueOf(timeAgoMilliseconds/MONTH));
-		}else {
+		}
+		else {
 			response.put("type", "YEAR");
 			response.put("value", String.valueOf(timeAgoMilliseconds/YEAR));
 		}
