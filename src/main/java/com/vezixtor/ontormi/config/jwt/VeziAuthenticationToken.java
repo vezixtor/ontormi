@@ -24,7 +24,7 @@ public class VeziAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return null;
+        return jsonWebToken;
     }
 
     @Override

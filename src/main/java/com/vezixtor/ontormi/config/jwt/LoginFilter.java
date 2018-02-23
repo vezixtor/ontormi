@@ -1,5 +1,7 @@
 package com.vezixtor.ontormi.config.jwt;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vezixtor.ontormi.exception.OntormiException;
 import com.vezixtor.ontormi.model.entity.User;
@@ -53,20 +55,23 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     private void setCredentialsOrThrow(HttpServletRequest request) throws IOException {
-//        try {
+        try {
             credentials = new ObjectMapper().readValue(request.getInputStream(), Map.class);
-//        }
-//        catch (JsonMappingException e) {
-//            throw new BadRequestException("No content body");
-//        }
-//        catch (JsonParseException e) {
-//            throw new BadRequestException("Unrecognized: Bad content body");
-//        }
+        }
+        catch (NullPointerException e) {
+            throw new OntormiException("Params not found", HttpStatus.BAD_REQUEST);
+        }
+        catch (JsonMappingException e) {
+            throw new OntormiException("No content body", HttpStatus.BAD_REQUEST);
+        }
+        catch (JsonParseException e) {
+            throw new OntormiException("Unrecognized: Bad content body", HttpStatus.BAD_REQUEST);
+        }
     }
 
     private void setUserOrThrow() {
         user = Optional.ofNullable(userRepository.findByEmail(credentials.get("email").toString()))
-                .orElseThrow(() -> new OntormiException("Usuário e/ou senha incorreto(s)", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new OntormiException("User not found", HttpStatus.BAD_REQUEST));
     }
 
     private void matchesPasswordOrThrow() {
