@@ -1,17 +1,47 @@
 {
 	"info": {
 		"name": "Ontormi",
-		"_postman_id": "920aeb21-24a9-49fa-9674-cd69e2eb8838",
+		"_postman_id": "6cc37ad1-5229-3dae-2947-76446493cf34",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "User",
+			"name": "Auth",
 			"description": "",
 			"item": [
 				{
-					"name": "Create User",
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "18475660-9054-4b3b-ab7d-a91707935826",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    ",
+									"    //Set token",
+									"    var access_token = postman.getResponseHeader(\"Access-Token\");",
+									"    pm.environment.set(\"access\", access_token);",
+									"    var refresh_token = postman.getResponseHeader(\"Refresh-Token\");",
+									"    pm.environment.set(\"refresh\", refresh_token);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ec7df4af-686f-4c67-93d8-e961bc0704c1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"local\", \"http://localhost:8080/api\");"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -22,80 +52,93 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"fullname\" : \"Everson Siqueira dos Santos\",\n\t\"email\" : \"everson@ontormi.com\",\n\t\"password\" : \"123qweasd\"\n}"
+							"raw": "{\n\t\"email\": \"vezi.dev@gmail.com\",\n\t\"password\": \"123qwe\"\n}"
 						},
 						"url": {
-							"raw": "{{local}}/api/users",
+							"raw": "{{local}}/auth",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"api",
-								"users"
+								"auth"
 							]
-						}
+						},
+						"description": ""
 					},
-					"response": [
-						{
-							"id": "4de95798-a5a3-43a6-9ac8-ad25784b264e",
-							"name": "Cadastrar usuário ADMIN",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"name\" : \"Mário Alvial\",\n\t\"email\" : \"mse.alvial@gmail.com\",\n\t\"password\" : \"1l1k31ttm\"\n}"
-								},
-								"url": {
-									"raw": "{{local}}/users",
-									"host": [
-										"{{local}}"
-									],
-									"path": [
-										"users"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"_postman_previewtype": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json;charset=UTF-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 24 Dec 2017 15:05:30 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked",
-									"name": "Transfer-Encoding",
-									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
-								}
-							],
-							"cookie": [],
-							"responseTime": 786,
-							"body": "{\"user\":{\"id\":1,\"name\":\"mse.alvial@gmail.com\",\"email\":\"Mário Alvial\"}}"
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Get User",
+					"name": "Refresh Tokens",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "18475660-9054-4b3b-ab7d-a91707935826",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    ",
+									"    //Set token",
+									"    var access_token = postman.getResponseHeader(\"Access-Token\");",
+									"    pm.environment.set(\"access\", access_token);",
+									"    var refresh_token = postman.getResponseHeader(\"Refresh-Token\");",
+									"    pm.environment.set(\"refresh\", refresh_token);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c058e33d-814d-417d-a982-26be830b0ba4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"local\", \"http://localhost:8080/api\");"
+								]
+							}
+						}
+					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{access}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"refresh_token\": \"{{refresh}}\"\n}"
+						},
+						"url": {
+							"raw": "{{local}}/auth/token",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"description": "",
+			"item": [
+				{
+					"name": "Sign up",
+					"request": {
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -104,78 +147,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"fullname\" : \"Everson Siqueira dos Santos\",\n\t\"email\" : \"vezi.dev@gmail.com\",\n\t\"password\" : \"123qweasd\"\n}"
+							"raw": "{\n\t\"fullname\": \"Everson Siqueira\",\n\t\"email\": \"vezi.dev@gmail.com\",\n\t\"password\": \"123qwe\"\n}"
 						},
 						"url": {
-							"raw": "{{local}}/api/users",
+							"raw": "{{local}}/users",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"api",
 								"users"
 							]
-						}
+						},
+						"description": ""
 					},
-					"response": [
-						{
-							"id": "af90f487-311a-46a1-9ae7-0d72a18d7668",
-							"name": "Cadastrar usuário ADMIN",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"name\" : \"Mário Alvial\",\n\t\"email\" : \"mse.alvial@gmail.com\",\n\t\"password\" : \"1l1k31ttm\"\n}"
-								},
-								"url": {
-									"raw": "{{local}}/users",
-									"host": [
-										"{{local}}"
-									],
-									"path": [
-										"users"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"_postman_previewtype": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json;charset=UTF-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 24 Dec 2017 15:05:30 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked",
-									"name": "Transfer-Encoding",
-									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
-								}
-							],
-							"cookie": [],
-							"responseTime": 786,
-							"body": "{\"user\":{\"id\":1,\"name\":\"mse.alvial@gmail.com\",\"email\":\"Mário Alvial\"}}"
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Update User",
+					"name": "Edit User",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -186,190 +174,41 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"fullname\" : \"Everson Santos\",\n\t\"email\" : \"ever.son@ontormi.com\"\n}"
+							"raw": "{\n\t\"fullname\": \"Everson Siqueira\",\n\t\"email\": \"vezi.dev@gmail.com\"\n}"
 						},
 						"url": {
-							"raw": "{{local}}/api/users",
+							"raw": "{{local}}/users",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"api",
 								"users"
 							]
-						}
+						},
+						"description": ""
 					},
-					"response": [
-						{
-							"id": "e9ed2ea8-a5ea-4033-910e-075e1355ae7d",
-							"name": "Cadastrar usuário ADMIN",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"name\" : \"Mário Alvial\",\n\t\"email\" : \"mse.alvial@gmail.com\",\n\t\"password\" : \"1l1k31ttm\"\n}"
-								},
-								"url": {
-									"raw": "{{local}}/users",
-									"host": [
-										"{{local}}"
-									],
-									"path": [
-										"users"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"_postman_previewtype": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json;charset=UTF-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 24 Dec 2017 15:05:30 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked",
-									"name": "Transfer-Encoding",
-									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
-								}
-							],
-							"cookie": [],
-							"responseTime": 786,
-							"body": "{\"user\":{\"id\":1,\"name\":\"mse.alvial@gmail.com\",\"email\":\"Mário Alvial\"}}"
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Delete User",
+					"name": "All Users",
 					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"method": "GET",
+						"header": [],
+						"body": {},
 						"url": {
-							"raw": "{{local}}/api/users",
+							"raw": "{{local}}/users",
 							"host": [
 								"{{local}}"
 							],
 							"path": [
-								"api",
 								"users"
 							]
-						}
+						},
+						"description": ""
 					},
-					"response": [
-						{
-							"id": "6f98d7e3-6a72-40e8-9056-0b09c26cd56e",
-							"name": "Cadastrar usuário ADMIN",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"name\" : \"Mário Alvial\",\n\t\"email\" : \"mse.alvial@gmail.com\",\n\t\"password\" : \"1l1k31ttm\"\n}"
-								},
-								"url": {
-									"raw": "{{local}}/users",
-									"host": [
-										"{{local}}"
-									],
-									"path": [
-										"users"
-									]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"_postman_previewtype": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json;charset=UTF-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Sun, 24 Dec 2017 15:05:30 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Transfer-Encoding",
-									"value": "chunked",
-									"name": "Transfer-Encoding",
-									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
-								}
-							],
-							"cookie": [],
-							"responseTime": 786,
-							"body": "{\"user\":{\"id\":1,\"name\":\"mse.alvial@gmail.com\",\"email\":\"Mário Alvial\"}}"
-						}
-					]
+					"response": []
 				}
 			]
-		},
-		{
-			"name": "Project",
-			"description": "",
-			"item": []
-		},
-		{
-			"name": "Task",
-			"description": "",
-			"item": []
-		},
-		{
-			"name": "Get Time - Escapes copy",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "{{heroku}}/api/escapes/atrigger",
-					"host": [
-						"{{heroku}}"
-					],
-					"path": [
-						"api",
-						"escapes",
-						"atrigger"
-					]
-				},
-				"description": ""
-			},
-			"response": []
 		}
 	]
 }

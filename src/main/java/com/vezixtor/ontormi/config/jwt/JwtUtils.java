@@ -1,6 +1,5 @@
 package com.vezixtor.ontormi.config.jwt;
 
-import com.vezixtor.ontormi.utils.TimeAgoUtils;
 import com.vezixtor.ontormi.utils.TimeUnits;
 import io.jsonwebtoken.*;
 

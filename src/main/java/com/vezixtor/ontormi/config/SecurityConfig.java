@@ -2,6 +2,7 @@ package com.vezixtor.ontormi.config;
 
 import com.vezixtor.ontormi.config.jwt.AuthorizationFilter;
 import com.vezixtor.ontormi.config.jwt.LoginFilter;
+import com.vezixtor.ontormi.config.jwt.RefreshTokenFilter;
 import com.vezixtor.ontormi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new LoginFilter("/api/auth", authenticationManager(), userRepository,
                                 getBCryptPasswordEncoder()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RefreshTokenFilter("/api/auth/token", authenticationManager(),
+                        userRepository), UsernamePasswordAuthenticationFilter.class)
 		        .addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
