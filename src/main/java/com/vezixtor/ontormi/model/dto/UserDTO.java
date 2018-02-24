@@ -39,4 +39,8 @@ public class UserDTO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public static UserDTO of(User user) {
+        return new UserDTO(user);
+    }
 }

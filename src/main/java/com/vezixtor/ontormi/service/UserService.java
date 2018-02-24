@@ -41,24 +41,21 @@ public class UserService extends BaseService {
     }
 
     public UserDTO getRead() {
-        Long mockedId = 1L; //TODO remove mock
-        User user = get(userRepository.findOne(mockedId), "User not found");
+        User user = getUserFromToken();
         return new UserDTO(user);
     }
 
     public UserDTO putUpdate(UserDTO userDTO) {
-        Long mockedId = 1L; //TODO remove mock
-        User user = get(userRepository.findOne(mockedId), "User not found");
+        User user = getUserFromToken();
         if (!user.getEmail().equals(userDTO.getEmail())) {
             ifUserIsPresentThrow(userDTO.getEmail());
         }
         User updateUser = userRepository.save(user.update(userDTO));
-        return new UserDTO(updateUser);
+        return UserDTO.of(updateUser);
     }
 
     public void delete() {
-        Long mockedId = 3L; //TODO remove mock
-        User user = get(userRepository.findOne(mockedId), "User not found");
+        User user = getUserFromToken();
         userRepository.save(user.delete());
     }
 }
