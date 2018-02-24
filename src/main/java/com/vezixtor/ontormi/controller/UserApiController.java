@@ -25,7 +25,7 @@ public class UserApiController {
         return ResponseEntity.ok(userService.postCreate(userDTO));
     }
 
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<?> getRead() {
         return ResponseEntity.ok(userService.getRead());
     }
