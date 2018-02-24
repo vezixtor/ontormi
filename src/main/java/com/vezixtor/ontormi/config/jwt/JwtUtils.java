@@ -1,7 +1,9 @@
 package com.vezixtor.ontormi.config.jwt;
 
+import com.vezixtor.ontormi.exception.OntormiException;
 import com.vezixtor.ontormi.utils.TimeUnits;
 import io.jsonwebtoken.*;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +61,12 @@ public abstract class JwtUtils implements TimeUnits {
     }
 
     public static String getAuthorization(HttpServletRequest request) {
-        return request.getHeader(HEADER_AUTHORIZATION).replace(TOKEN_PREFIX, "");
+		try {
+			return request.getHeader(HEADER_AUTHORIZATION).replace(TOKEN_PREFIX, "");
+		}
+		catch (NullPointerException e) {
+			throw new OntormiException("Header not found: Authorization", HttpStatus.BAD_REQUEST);
+		}
     }
 
     public static String getAuthorization(ServletRequest request) {

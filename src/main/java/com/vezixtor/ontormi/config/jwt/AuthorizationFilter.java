@@ -1,5 +1,6 @@
 package com.vezixtor.ontormi.config.jwt;
 
+import com.vezixtor.ontormi.exception.OntormiException;
 import com.vezixtor.ontormi.utils.ExceptionResolverUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -31,6 +32,9 @@ public class AuthorizationFilter extends GenericFilterBean {
 		}
 		catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException e) {
 			ExceptionResolverUtils.restResponse(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
+		}
+		catch (NullPointerException | OntormiException e) {
+			ExceptionResolverUtils.restResponse(response, e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
