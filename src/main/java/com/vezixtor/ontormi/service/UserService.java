@@ -19,6 +19,11 @@ public class UserService extends BaseService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
+    protected String getNotFoundMessage() {
+        return "User not found";
+    }
+
     public UserDTO postCreate(UserDTO userDTO) {
         validPasswordOrElseThrow(userDTO.getPassword());
         ifUserIsPresentThrow(userDTO.getEmail());

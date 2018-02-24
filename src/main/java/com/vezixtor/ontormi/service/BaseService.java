@@ -31,12 +31,18 @@ abstract class BaseService {
         return list != null && !list.isEmpty();
     }
 
-    <T> T get(T object, String key){
-        return Optional.ofNullable(object).orElseThrow(() -> new OntormiException(key, HttpStatus.NOT_FOUND));
+    protected abstract String getNotFoundMessage();
+
+    <T> T getOrThrow(T object, String message){
+        return Optional.ofNullable(object).orElseThrow(() -> new OntormiException(message, HttpStatus.NOT_FOUND));
+    }
+
+    <T> T getOrThrow(T object){
+        return getOrThrow(object, getNotFoundMessage());
     }
 
     protected User getUserFromToken() {
         String subject = JwtUtils.parser(httpServletRequest).getSubject();
-        return get(userRepository.findByEmail(subject), "Not found");
+        return getOrThrow(userRepository.findByEmail(subject));
     }
 }
