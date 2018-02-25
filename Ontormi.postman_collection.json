@@ -380,6 +380,51 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Sniff - WS\",\n\t\"description\": \"Rede social de pets\"\n}"
+						},
+						"url": {
+							"raw": "{{local}}/projects?next=3&limit=10",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"projects"
+							],
+							"query": [
+								{
+									"key": "previous",
+									"value": "10",
+									"equals": true,
+									"disabled": true
+								},
+								{
+									"key": "next",
+									"value": "3",
+									"equals": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		}
