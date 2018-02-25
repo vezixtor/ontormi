@@ -35,7 +35,15 @@ public class ProjectDTO {
         return description;
     }
 
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
     public UserDTO getUser() {
         return user;
+    }
+
+    public static ProjectDTO of(Project project) {
+        return new ProjectDTO(project);
     }
 }

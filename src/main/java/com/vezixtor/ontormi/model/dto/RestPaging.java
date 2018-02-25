@@ -1,39 +1,55 @@
 package com.vezixtor.ontormi.model.dto;
 
+import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PagingResponse<T extends PagingResponse<T>> {
+public abstract class RestPaging<T> {
 
-    private List<Object> data;
+    private List<Object> data = new ArrayList<>();
     private Paging paging;
 
     protected abstract List<?> getSubclassData();
 
-    protected abstract String getDeclaredFieldAtSubclassData();
+    protected abstract String getPrimaryKeyDeclaredField();
 
-    public T withPaging() {
-        return withPaging(null);
+    public T withPaging(Integer limit) {
+        return withPaging(null, limit);
     }
 
-    public T withPaging(String url) {
-        data = new ArrayList<>();
-        data.addAll(getSubclassData());
-        paging = new Paging(new Cursor(getBeforeRecordId(), getAfterRecordId()), null, null);
-        if (hasUrl(url)) {
-            withUrl(url);
+    public T withPaging(String url, Integer limit) {
+        if (hasData()) {
+            data.addAll(getSubclassData());
+            paging = new Paging(new Cursor(getBeforeRecordId(), getAfterRecordId()), null, null);
+            if (hasUrl(url)) {
+                withUrl(url, limit);
+            }
         }
         return (T) this;
+    }
+
+    private boolean hasData() {
+        List<?> subclassData = getSubclassData();
+        return subclassData != null && subclassData.size() > 0;
     }
 
     private boolean hasUrl(String url) {
         return url != null && !url.trim().isEmpty();
     }
 
-    private void withUrl(String url) {
-        String previous = url + "?previous=" + paging.getCursors().getBefore();
-        String next = url + "?next=" + paging.getCursors().getAfter();
+    private void withUrl(String url, Integer limit) {
+        String previous = new StringBuilder().append(url)
+                .append("?limit=").append(limit)
+                .append("&previous=").append(paging.getCursors().getBefore())
+                .toString();
+
+        String next = new StringBuilder().append(url)
+                .append("?limit=").append(limit)
+                .append("&next=").append(paging.getCursors().getAfter())
+                .toString();
+
         paging.setPrevious(previous);
         paging.setNext(next);
     }
@@ -49,13 +65,13 @@ public abstract class PagingResponse<T extends PagingResponse<T>> {
     }
 
     private String getObjectId(Object object) {
-        String objectIdValue = "";
+        String objectIdValue;
         try {
-            Field field = object.getClass().getDeclaredField(getDeclaredFieldAtSubclassData());
+            Field field = object.getClass().getDeclaredField(getPrimaryKeyDeclaredField());
             field.setAccessible(true);
             objectIdValue = String.valueOf(field.get(object));
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            throw new InternalException(e.getMessage());
         }
         return objectIdValue;
     }
@@ -65,7 +81,7 @@ public abstract class PagingResponse<T extends PagingResponse<T>> {
         String previous;
         String next;
 
-        Paging(PagingResponse<T>.Cursor cursors, String previous, String next) {
+        Paging(RestPaging<T>.Cursor cursors, String previous, String next) {
             this.cursors = cursors;
             this.previous = previous;
             this.next = next;
@@ -128,5 +144,9 @@ public abstract class PagingResponse<T extends PagingResponse<T>> {
 
     public List<?> getData() {
         return data;
+    }
+
+    public void setData(List<Object> data) {
+        this.data = data;
     }
 }

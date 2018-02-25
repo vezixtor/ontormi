@@ -40,4 +40,11 @@ public class ProjectApiController {
     public void delete(@PathVariable("id") Long id) {
         projectService.delete(id);
     }
+
+    @GetMapping
+    public ResponseEntity<?> getAll(@RequestParam(name = "previous", required = false) Long previous,
+                                    @RequestParam(name = "next", required = false) Long next,
+                                    @RequestParam(name = "limit", required = false, defaultValue = "5") Integer limit) {
+        return ResponseEntity.ok(projectService.getAll(previous, next, limit));
+    }
 }
